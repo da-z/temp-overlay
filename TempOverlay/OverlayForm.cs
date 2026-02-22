@@ -35,7 +35,7 @@ namespace TempOverlay
         {
             _reader = new TemperatureReader();
             _settings = OverlaySettings.Load();
-            _valueFontFamily = GetPreferredMonospaceFamily();
+            _valueFontFamily = EmbeddedFontLoader.GetPreferredFamilyName("Cascadia Mono");
             _fontFamily = _valueFontFamily;
             ApplyStartupSetting();
 
@@ -276,24 +276,6 @@ namespace TempOverlay
             // Slight negative spacing tightens the visual gap between CPU/GPU rows.
             _ = size;
             return -2;
-        }
-
-        private static string GetPreferredMonospaceFamily()
-        {
-            var installedFonts = new InstalledFontCollection().Families;
-            var preferredFamilies = new[] { "Cascadia Mono", "Consolas", "Lucida Console", "Share Tech Mono", "Courier New" };
-            foreach (var family in preferredFamilies)
-            {
-                foreach (var installed in installedFonts)
-                {
-                    if (string.Equals(installed.Name, family, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return installed.Name;
-                    }
-                }
-            }
-
-            return FontFamily.GenericMonospace.Name;
         }
 
         private static void GetThemeColors(OverlayTheme theme, out Color cpuColor, out Color gpuColor, out Color statusColor)
