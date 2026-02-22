@@ -78,7 +78,7 @@ namespace TempOverlay
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.SupportsTransparentBackColor, true);
             BackColor = Color.Transparent;
             ForeColor = Color.White;
-            Font = new Font("Tektur", 18, FontStyle.Bold);
+            Font = new Font("Share Tech Mono", 18, FontStyle.Bold);
             Text = string.Empty;
         }
 

@@ -15,6 +15,9 @@ namespace TempOverlay
         private const byte AcSrcOver = 0x00;
         private const byte AcSrcAlpha = 0x01;
         private const int InnerPadding = 0;
+        private const int TempValueFieldWidth = 5;
+        private const string CpuWidthTemplate = "CPU: 888.8 C";
+        private const string GpuWidthTemplate = "GPU: 888.8 C";
 
         private readonly OutlineLabel _cpuLabel;
         private readonly OutlineLabel _gpuLabel;
@@ -24,13 +27,16 @@ namespace TempOverlay
         private readonly NotifyIcon _trayIcon;
         private readonly ContextMenuStrip _trayMenu;
         private readonly string _fontFamily;
+        private readonly string _valueFontFamily;
         private OverlaySettings _settings;
+        private int _valueColumnWidth;
 
         public OverlayForm()
         {
             _reader = new TemperatureReader();
             _settings = OverlaySettings.Load();
-            _fontFamily = EmbeddedFontLoader.GetPreferredFamilyName("Tektur");
+            _valueFontFamily = GetPreferredMonospaceFamily();
+            _fontFamily = _valueFontFamily;
             ApplyStartupSetting();
 
             FormBorderStyle = FormBorderStyle.None;
@@ -203,7 +209,9 @@ namespace TempOverlay
 
         private static string FormatTemp(string sensor, float? value)
         {
-            return value.HasValue ? string.Format("{0}: {1:0.0} C", sensor, value.Value) : sensor + ": --.- C";
+            return value.HasValue
+                ? string.Format("{0}: {1," + TempValueFieldWidth + ":0.0} C", sensor, value.Value)
+                : string.Format("{0}: {1," + TempValueFieldWidth + "} C", sensor, "--.-");
         }
 
         private static Icon GetTrayIcon()
@@ -229,13 +237,14 @@ namespace TempOverlay
             var valueFontSize = GetValueFontSize(_settings.FontSize);
             var statusFontSize = Math.Max(8f, valueFontSize * 0.48f);
 
-            _cpuLabel.Font = new Font(_fontFamily, valueFontSize, FontStyle.Regular);
-            _gpuLabel.Font = new Font(_fontFamily, valueFontSize, FontStyle.Regular);
+            _cpuLabel.Font = new Font(_valueFontFamily, valueFontSize, FontStyle.Regular);
+            _gpuLabel.Font = new Font(_valueFontFamily, valueFontSize, FontStyle.Regular);
             _statusLabel.Font = new Font(_fontFamily, statusFontSize, FontStyle.Regular);
 
-            _cpuLabel.OutlineColor = Color.Black;
-            _gpuLabel.OutlineColor = Color.Black;
-            _statusLabel.OutlineColor = Color.Black;
+            var outlineColor = Color.FromArgb(150, 32, 32, 32);
+            _cpuLabel.OutlineColor = outlineColor;
+            _gpuLabel.OutlineColor = outlineColor;
+            _statusLabel.OutlineColor = outlineColor;
             _cpuLabel.OutlineWidth = 1;
             _gpuLabel.OutlineWidth = 1;
             _statusLabel.OutlineWidth = 1;
@@ -244,6 +253,10 @@ namespace TempOverlay
             _cpuLabel.ForeColor = cpuColor;
             _gpuLabel.ForeColor = gpuColor;
             _statusLabel.ForeColor = statusColor;
+
+            _valueColumnWidth = Math.Max(
+                MeasureOutlinedTextWidth(CpuWidthTemplate, _cpuLabel.Font, _cpuLabel.OutlineWidth),
+                MeasureOutlinedTextWidth(GpuWidthTemplate, _gpuLabel.Font, _gpuLabel.OutlineWidth));
         }
 
         private static float GetValueFontSize(OverlayFontSize size)
@@ -260,9 +273,27 @@ namespace TempOverlay
 
         private static int GetRowSpacing(OverlayFontSize size)
         {
-            // Keep rows tighter than before while still scaling with font size.
-            var valueFontSize = GetValueFontSize(size);
-            return Math.Max(0, (int)Math.Floor(valueFontSize * 0.06f));
+            // Slight negative spacing tightens the visual gap between CPU/GPU rows.
+            _ = size;
+            return -2;
+        }
+
+        private static string GetPreferredMonospaceFamily()
+        {
+            var installedFonts = new InstalledFontCollection().Families;
+            var preferredFamilies = new[] { "Cascadia Mono", "Consolas", "Lucida Console", "Share Tech Mono", "Courier New" };
+            foreach (var family in preferredFamilies)
+            {
+                foreach (var installed in installedFonts)
+                {
+                    if (string.Equals(installed.Name, family, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return installed.Name;
+                    }
+                }
+            }
+
+            return FontFamily.GenericMonospace.Name;
         }
 
         private static void GetThemeColors(OverlayTheme theme, out Color cpuColor, out Color gpuColor, out Color statusColor)
@@ -287,7 +318,7 @@ namespace TempOverlay
                 case OverlayTheme.NeonMint:
                 default:
                     cpuColor = Color.MediumSpringGreen;
-                    gpuColor = Color.MediumOrchid;
+                    gpuColor = Color.LimeGreen;
                     statusColor = Color.WhiteSmoke;
                     break;
             }
@@ -315,7 +346,7 @@ namespace TempOverlay
             _cpuLabel.Location = new Point(InnerPadding, InnerPadding);
             _gpuLabel.Location = new Point(InnerPadding, _cpuLabel.Bottom + rowSpacing);
 
-            var width = Math.Max(_cpuLabel.Width, _gpuLabel.Width);
+            var width = Math.Max(_valueColumnWidth, Math.Max(_cpuLabel.Width, _gpuLabel.Width));
             var bottom = _gpuLabel.Bottom;
 
             if (_statusLabel.Visible)
@@ -327,6 +358,12 @@ namespace TempOverlay
 
             Width = Math.Max(1, width + (InnerPadding * 2));
             Height = Math.Max(1, bottom + InnerPadding);
+        }
+
+        private static int MeasureOutlinedTextWidth(string text, Font font, int outlineWidth)
+        {
+            var size = TextRenderer.MeasureText(text, font, Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+            return Math.Max(1, size.Width + (outlineWidth * 2) + 4);
         }
 
         private void RenderLayeredOverlay()
