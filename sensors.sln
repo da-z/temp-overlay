@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempOverlay", "TempOverlay\\TempOverlay.csproj", "{01F9C813-A170-CECF-A074-875B70476308}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01F9C813-A170-CECF-A074-875B70476308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01F9C813-A170-CECF-A074-875B70476308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01F9C813-A170-CECF-A074-875B70476308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01F9C813-A170-CECF-A074-875B70476308}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {128F0C16-8C2E-41E4-A2DD-9E73B1A27D6B}
+	EndGlobalSection
+EndGlobal
+

@@ -1,0 +1,28 @@
+# Build outputs
+bin/
+obj/
+release/
+publish/
+publish-*/
+
+# .NET user/IDE files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.zip
+*.exe
+*.pdb
+
+# OS files
+Thumbs.db
+Desktop.ini

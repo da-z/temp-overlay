@@ -1,0 +1,36 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore sensors.sln
+
+      - name: Publish EXE (Release, win-x64)
+        run: dotnet publish TempOverlay/TempOverlay.csproj -c Release -r win-x64 --self-contained false -o release-small
+
+      - name: Upload release-small artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TempOverlay-release-small
+          path: release-small/**
+          if-no-files-found: error
