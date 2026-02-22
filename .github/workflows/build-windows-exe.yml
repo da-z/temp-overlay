@@ -41,13 +41,16 @@ jobs:
           if-no-files-found: error
 
       - name: Zip release-small for GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         shell: pwsh
         run: Compress-Archive -Path release-small\TempOverlay.exe -DestinationPath temp-overlay.zip -Force
 
       - name: Create GitHub Release and upload asset
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'Latest' }}
+          target_commitish: ${{ github.sha }}
           files: temp-overlay.zip
           generate_release_notes: true
