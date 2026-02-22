@@ -5,9 +5,14 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*"
   pull_request:
     branches:
       - main
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -34,3 +39,15 @@ jobs:
           name: TempOverlay-release-small
           path: release-small/**
           if-no-files-found: error
+
+      - name: Zip release-small for GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: Compress-Archive -Path release-small\TempOverlay.exe -DestinationPath temp-overlay.zip -Force
+
+      - name: Create GitHub Release and upload asset
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: temp-overlay.zip
+          generate_release_notes: true
