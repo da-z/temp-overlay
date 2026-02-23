@@ -23,10 +23,11 @@ namespace TempOverlay
         public OverlayTheme SelectedTheme { get; private set; }
         public OverlayFontSize SelectedFontSize { get; private set; }
         public event EventHandler SettingsApplied;
+        public event EventHandler PreviewChanged;
 
         public SettingsForm(OverlaySettings current)
         {
-            Text = "Overlay Settings";
+            Text = "Settings";
             Font = new Font(SystemFonts.MessageBoxFont.FontFamily, 8f, FontStyle.Regular);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterScreen;
@@ -207,6 +208,13 @@ namespace TempOverlay
                 CaptureSelections();
                 SettingsApplied?.Invoke(this, EventArgs.Empty);
             };
+
+            _positionCombo.SelectedIndexChanged += (_, __) => NotifyPreviewChanged();
+            _verticalPaddingInput.ValueChanged += (_, __) => NotifyPreviewChanged();
+            _horizontalPaddingInput.ValueChanged += (_, __) => NotifyPreviewChanged();
+            _themeCombo.SelectedIndexChanged += (_, __) => NotifyPreviewChanged();
+            _fontSizeCombo.SelectedIndexChanged += (_, __) => NotifyPreviewChanged();
+            _startupCheck.CheckedChanged += (_, __) => NotifyPreviewChanged();
         }
 
         private void ApplyCurrentValues(OverlaySettings current)
@@ -300,6 +308,12 @@ namespace TempOverlay
             RunAtStartup = _startupCheck.Checked;
             SelectedTheme = IndexToTheme(_themeCombo.SelectedIndex);
             SelectedFontSize = IndexToFontSize(_fontSizeCombo.SelectedIndex);
+        }
+
+        private void NotifyPreviewChanged()
+        {
+            CaptureSelections();
+            PreviewChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

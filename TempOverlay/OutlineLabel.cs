@@ -122,8 +122,8 @@ namespace TempOverlay
             }
 
             var size = TextRenderer.MeasureText(Text, Font, Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
-            Width = Math.Max(1, size.Width + (OutlineWidth * 2) + 4);
-            Height = Math.Max(1, size.Height + (OutlineWidth * 2) + 4);
+            Width = Math.Max(1, size.Width + (OutlineWidth * 2));
+            Height = Math.Max(1, size.Height + (OutlineWidth * 2));
         }
     }
 }

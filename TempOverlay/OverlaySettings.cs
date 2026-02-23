@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -31,6 +32,12 @@ namespace TempOverlay
 
     internal sealed class OverlaySettings
     {
+        internal sealed class SavedOverlayPosition
+        {
+            public int Left { get; set; }
+            public int Top { get; set; }
+        }
+
         public OverlayPositionPreset Position { get; set; } = OverlayPositionPreset.TopRight;
         public int VerticalPadding { get; set; } = 20;
         public int HorizontalPadding { get; set; } = 20;
@@ -39,6 +46,7 @@ namespace TempOverlay
         public bool RunAtStartup { get; set; } = false;
         public OverlayTheme Theme { get; set; } = OverlayTheme.NeonMint;
         public OverlayFontSize FontSize { get; set; } = OverlayFontSize.Medium;
+        public Dictionary<string, SavedOverlayPosition> FullscreenAppPositions { get; set; } = new Dictionary<string, SavedOverlayPosition>();
 
         private static string SettingsPath
         {
@@ -75,6 +83,7 @@ namespace TempOverlay
                 settings.VerticalPadding = Math.Max(0, settings.VerticalPadding);
                 settings.HorizontalPadding = Math.Max(0, settings.HorizontalPadding);
                 settings.FontSize = NormalizeFontSize(settings.FontSize);
+                settings.FullscreenAppPositions ??= new Dictionary<string, SavedOverlayPosition>();
                 settings.Padding = null;
                 return settings;
             }
