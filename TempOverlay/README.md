@@ -6,7 +6,6 @@ Always-on-top, click-through desktop overlay that shows CPU and GPU temperatures
 
 - Windows 10/11
 - Visual Studio 2022 (or MSBuild with .NET Framework 4.8 targeting pack)
-- LibreHardwareMonitor running with its WMI server enabled
 
 ## Build
 
@@ -16,5 +15,4 @@ Always-on-top, click-through desktop overlay that shows CPU and GPU temperatures
 ## Notes
 
 - Temperature data is read from WMI namespace: `root\LibreHardwareMonitor`.
-- If LibreHardwareMonitor is not running (or WMI is disabled), the overlay shows an error status.
 - Overlay refresh interval is 2 seconds.
