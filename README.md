@@ -4,7 +4,7 @@ Windows desktop temperature overlay for CPU/GPU with tray settings.
 
 ## Screenshot
 
-![TempOverlay screenshot](TempOverlay/assets/sensor-overlay-preview.png)
+<img width="589" height="400" alt="image" src="https://github.com/user-attachments/assets/d25ee0fa-6af7-4ab8-ab0b-43c027c7b0e8" />
 
 ## Features
 
